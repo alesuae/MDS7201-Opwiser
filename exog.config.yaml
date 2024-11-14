@@ -1,0 +1,37 @@
+path: .
+
+creds: creds.txt
+
+series:
+  # CUENTAS NACIONALES
+  # series de imacec y pib volumen a precios ctes, encadenados
+  # ie, refleja la act. economica ajustada por inflacion
+  imacec_general: "F032.IMC.IND.Z.Z.EP18.Z.Z.0.M"
+  imacec_comercio: "F032.IMC.IND.Z.Z.EP18.COM.Z.0.M"
+  imacec_no_minero: "F032.IMC.IND.Z.Z.EP18.N03.Z.0.M"
+  pib: "F032.PIB.FLU.R.CLP.2018.Z.Z.0.M"
+
+  # ESTADISTICAS EXPERIMENTALES
+  # compraventas con facturas electronicas
+  ee_comercio: "F034.CV.FLU.BCCH.Z.COM.M"
+
+  # EXPECTATIVAS ECONOMICAS
+  # indice mensual de confianza empresarial (IMCE)
+  imce_general: "G089.IME.IND.A0.M"
+  imce_comercio: "G089.IME.IND.A1.M"
+  # indice de confianza del consumidor (IPSOS ICC)
+  icc: "F089.ICC.IND.B2M.M"
+
+  # INDICADORES SECTORIALES
+  # alimentos
+  ine_alimentos: "F034.VCCAB.IND.INE.2018.0.M"
+  # indice general de supermercados (INE)
+  ine_supermercados: "F034.VSSR.IND.INE.2018.0.M"
+
+  # TASAS DE INTERES
+  # tasa de politica monetaria (TPM)
+  tpm: "F022.TPM.TIN.D001.NO.Z.D"
+
+dates:
+  start: "2018-01-01"
+  end: "2024-06-01"
