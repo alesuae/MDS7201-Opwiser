@@ -1,6 +1,7 @@
 # custom
 raw_data/
 .DS_Store
+creds.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
