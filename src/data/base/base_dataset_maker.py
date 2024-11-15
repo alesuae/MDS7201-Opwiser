@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
 import pandas as pd
+import numpy as np
 from base.progress_bar import ProgressBar
 
 class BaseDatasetMaker(ABC):
-    def __init__(self, source_path: str):
-        self.source_path = source_path
+    def __init__(self):
+        self.source_path = None
         self.data = None
         self.progress_bar = ProgressBar()
 
@@ -32,18 +33,13 @@ class BaseDatasetMaker(ABC):
         self.progress_bar.update_total_steps(3)
         self.progress_bar.log("Starting basic cleaning...")
 
-        self.progress_bar.log("Removing spaces in column names")
-        self.data.columns = self.data.columns.str.strip()  # Remove spaces in column names
+        self.progress_bar.log("Replace NA to NaN values")
+        self.data = self.data.replace("NA", np.nan, inplace=True)
         self.progress_bar.check()
 
         self.progress_bar.log("Removing completely empty rows")
         self.data.dropna(how='all', inplace=True)  # Remove completely empty rows
         self.progress_bar.check()
-
-        self.progress_bar.log("Removing spaces in string values")
-        self.data = self.data.applymap(lambda x: x.strip() if isinstance(x, str) else x)  # Remove spaces in strings
-        self.progress_bar.check()
-
         self.progress_bar.close()
 
     def convert_dates(self, date_column:str):
@@ -57,7 +53,7 @@ class BaseDatasetMaker(ABC):
         """
         self.progress_bar.update_total_steps(1)
         self.progress_bar.log(f"Converting {date_column} to date format")
-        self.data[date_column] = pd.to_datetime(self.data[date_column], errors='coerce')
+        self.data[date_column] = pd.to_datetime(self.data[date_column]).dt.tz_localize(None)
         self.progress_bar.check()
         self.progress_bar.close()
 
