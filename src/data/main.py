@@ -3,14 +3,16 @@ from dataset_makers.stock_dataset_maker import StockDatasetMaker
 from data_integrator.data_integrator import DataIntegrator
 from data_extractors.exogenus_data_extractor import ExogenousDataExtractor
 
+# TODO: remove hardcoded values
+
 # Create and process the sales and stock datasets
-sales_maker = SalesDatasetMaker('data/sales_data.csv')
+sales_maker = SalesDatasetMaker('data')
 sales_maker.load_data()
 sales_maker.basic_cleaning()
 sales_maker.convert_dates('fecha')
 sales_data = sales_maker.get_data()
 
-stock_maker = StockDatasetMaker('data/stock_data.csv')
+stock_maker = StockDatasetMaker('data')
 stock_maker.load_data()
 stock_maker.basic_cleaning()
 stock_maker.convert_dates('fecha')
