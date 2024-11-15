@@ -1,0 +1,15 @@
+sales:
+  path: "raw_data/venta_anonimizada_vf.csv"
+  maestro_path: "raw_data/maestro_producto_anonimizado.csv"
+
+  numeric_vars:
+    venta: "venta_total_neto"
+    costo: "costo_total"
+    cantidad: "cantidad"
+
+stock:
+  path: "raw_data/stock_historico_anonimizado.csv"
+  numeric_vars: 
+    stock: "stock_disponible_total"
+
+sku: "codigo_producto2"
