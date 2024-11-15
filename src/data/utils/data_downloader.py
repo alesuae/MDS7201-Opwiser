@@ -2,7 +2,7 @@
 import bcchapi
 import pandas as pd
 import numpy as np
-from config import get_config
+from utils.config import get_config
 
 def download_data_from_api(config: str) -> pd.DataFrame:
     """
@@ -30,6 +30,7 @@ def download_data_from_api(config: str) -> pd.DataFrame:
     start = config_dict["dates"]["start"]
     end = config_dict["dates"]["end"]
 
+    # TODO: change hardcoded values to config values
     exog_monthly = siete.cuadro(
         series=list(monthly_series.values()),
         nombres=list(monthly_series.keys()),
