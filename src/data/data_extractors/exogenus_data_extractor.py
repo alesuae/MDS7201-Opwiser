@@ -2,6 +2,8 @@ import pandas as pd
 from utils.data_downloader import download_data_from_api
 from base.progress_bar import ProgressBar
 
+# TODO: implement data preprocessing and add weather and holiday data
+
 class ExogenousDataExtractor:
     def __init__(self, config_mode):
         self.config_filepath = config_mode
