@@ -34,7 +34,7 @@ class BaseDatasetMaker(ABC):
         self.progress_bar.log("Starting basic cleaning...")
 
         self.progress_bar.log("Replace NA to NaN values")
-        self.data = self.data.replace("NA", np.nan, inplace=True)
+        self.data.replace("NA", np.nan, inplace=True)
         self.progress_bar.check()
 
         self.progress_bar.log("Removing completely empty rows")
