@@ -36,10 +36,11 @@ class SalesDatasetMaker(BaseDatasetMaker):
         self.progress_bar.check()
 
         # Delete data of 2020
-        self.progress_bar.log("Removing data of 2020")
-        self.data = self.data[self.data['fecha'].dt.year != 2020]
-        self.progress_bar.check()
-
+        #self.progress_bar.log("Removing data of 2020")
+        #self.data = self.data[self.data['fecha'].dt.year != 2020]
+        #self.progress_bar.check()
+        # TODO: eliminar notas de credito
+        
         # Transform numeric data to float
         self.progress_bar.log("Transforming sales data to numeric")
         for idx in range(len(variables)):
