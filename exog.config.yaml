@@ -30,10 +30,10 @@ series:
 
   # TASAS DE INTERES
   # tasa de politica monetaria (TPM)
-  tpm: "F022.TPM.TIN.D001.NO.Z.D"
+  tpm: "F089.TPM.TAS.11.M"
 
 dates:
-  start: "2018-01-01"
+  start: "2018-03-01"
   end: "2024-06-01"
 
 weather:
