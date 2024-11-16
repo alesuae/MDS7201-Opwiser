@@ -1,4 +1,3 @@
-from src.data.exogenus_data.exogenus_data_selector import ExogenousDataSelector
 import pandas as pd
 from utils.config import get_config
 
@@ -13,10 +12,11 @@ class DataIntegrator:
         """
         Merge sales data, stock data and exogenous data
         """
-        df_combined = df_combined.merge(df_exog, on='fecha', how='left')
+        # Merge sales and exogenous data
+        df_combined = df_sales.merge(df_exog, on='fecha', how='left')
 
+        # Merge stock data
         # TODO: Check sql query for stock imputation
-        df_combined = df_sales.merge(df_stock, on=self.join_keys, how='left')
-        
+        df_combined = df_combined.merge(df_stock, on=self.join_keys, how='left')
         return df_combined
 
