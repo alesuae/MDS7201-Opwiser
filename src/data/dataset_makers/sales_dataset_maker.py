@@ -3,6 +3,7 @@ from base.progress_bar import ProgressBar
 from utils.config import get_config
 from utils.sku_merger import merge_by_sku
 import pandas as pd
+import polars as pl
 
 class SalesDatasetMaker(BaseDatasetMaker):
     def __init__(self, config_mode: str):
@@ -13,19 +14,22 @@ class SalesDatasetMaker(BaseDatasetMaker):
         self.source_path = self.config_dict['sales']["path"]
         self.maestro_path = self.config_dict['sales']["maestro_path"]
 
-        self.numeric_variables = self.config_dict["sales"]["numeric_vars"]
+        self.numeric_variables = self.config_dict["sales"]["numeric_vars"].values()
         self.sku = self.config_dict["sku"]
 
-    def load_data(self):
+    def load_data(self): 
         """Load data from a CSV file or any other source."""
         self.progress_bar.update_total_steps(1)
         self.progress_bar.log("Loading sales data and maestro data...")
-        self.data = pd.read_csv(self.source_path)
-        self.maestro_data = pd.read_csv(self.maestro_path)
+        self.data = pl.read_csv(source=self.source_path, separator=';')
+        self.maestro_data = pl.read_csv(source=self.maestro_path, separator=';')
+        self.data = self.data.to_pandas()
+        self.maestro_data = self.maestro_data.to_pandas()
         self.progress_bar.check()
         self.progress_bar.close()
 
-    def transform_data(self):
+
+    def clean_data(self):
         variables = list(self.numeric_variables)
 
         # Delete missing data (SKU)
@@ -34,12 +38,6 @@ class SalesDatasetMaker(BaseDatasetMaker):
         self.progress_bar.log("Removing missing data by sku")
         self.data = self.data.dropna(subset=[self.sku])
         self.progress_bar.check()
-
-        # Delete data of 2020
-        #self.progress_bar.log("Removing data of 2020")
-        #self.data = self.data[self.data['fecha'].dt.year != 2020]
-        #self.progress_bar.check()
-        # TODO: eliminar notas de credito
         
         # Transform numeric data to float
         self.progress_bar.log("Transforming sales data to numeric")
