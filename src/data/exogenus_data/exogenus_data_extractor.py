@@ -9,7 +9,7 @@ from utils.config import get_config
 
 class ExogenousDataExtractor:
     def __init__(self, config_mode):
-        self.config_filepath = config_mode
+        self.config_mode = config_mode
         self.progress_bar = ProgressBar()
 
         self.config_dict = get_config(self.config_mode)
@@ -24,11 +24,11 @@ class ExogenousDataExtractor:
         self.progress_bar.update_total_steps(1)
         self.progress_bar.log("Requesting data from API...")
 
-        df_monthly, df_quarterly = download_data_from_api(self.config_mode)
+        df_macro = download_data_from_api(self.config_mode)
         
         self.progress_bar.check()
         self.progress_bar.close()
-        return df_monthly, df_quarterly
+        return df_macro
     
     def fetch_weather_data(self):
         """
@@ -38,8 +38,12 @@ class ExogenousDataExtractor:
         start_date = datetime.strptime(self.dates["start"], "%Y-%m-%d")
         end_date = datetime.strptime(self.dates["end"], "%Y-%m-%d")
         weather = Daily(location, start=start_date, end=end_date)
+        weather = weather.fetch()
+        weather.reset_index(inplace=True)
+        weather = weather.rename(columns={"time": "fecha"})
+        weather['fecha'] = pd.to_datetime(weather['fecha'])
 
-        weather = weather[self.weather_data["variables"]].reset_index(drop=True)
+        weather = weather[self.weather_data["variables"]]
         weather.fillna(0, inplace=True)
         return weather
     
@@ -48,9 +52,10 @@ class ExogenousDataExtractor:
         Fetches holidays data
         """
         years = range(int(self.dates["start"][:4]), int(self.dates["end"][:4]))
-
-        cl_holidays = country_holidays.CountryHoliday(self.weather_data["country"], years=years)
+        
+        cl_holidays = country_holidays(self.weather_data["country"], years=years)
         cl_holidays = pd.DataFrame(list(cl_holidays.keys()), columns=["fecha"])
+        cl_holidays['es_festivo'] = 1
         return cl_holidays
     
     def fetch_discounts_data(self):
@@ -60,9 +65,28 @@ class ExogenousDataExtractor:
         """
         cyber_monday = pd.DataFrame({"fecha": self.discounts["cybermonday"]})
         black_friday = pd.DataFrame({"fecha": self.discounts["blackfriday"]})
-        return cyber_monday, black_friday
+
+        cyber_monday['cyber_monday'] = 1
+        black_friday['black_friday'] = 1
+        discounts = cyber_monday.merge(black_friday, on='fecha', how='outer')
+        return discounts
     
-    # TODO: clean method
+    def join_data(self):
+        self.fetch_macro_data = self.preprocess_data(self.fetch_macro_data(), 'fecha')
+        self.fetch_holidays_data = self.preprocess_data(self.fetch_holidays_data(), 'fecha')
+        self.fetch_weather_data = self.preprocess_data(self.fetch_weather_data(), 'fecha')
+        self.fetch_discounts_data = self.preprocess_data(self.fetch_discounts_data(), 'fecha')
+
+        df_combined = pd.merge(self.fetch_macro_data, self.fetch_holidays_data, on='fecha', how='left')
+        df_combined = pd.merge(df_combined, self.fetch_weather_data, on='fecha', how='left')
+        df_combined = pd.merge(df_combined, self.fetch_discounts_data, on='fecha', how='left')
+
+        df_combined['cyber_monday'] = df_combined['cyber_monday'].fillna(0).astype(int)
+        df_combined['black_friday'] = df_combined['black_friday'].fillna(0).astype(int)
+        df_combined['es_festivo'] = df_combined['es_festivo'].fillna(0).astype(int)
+
+        return df_combined
+
     def preprocess_data(self, df, date_column):
         """
         Performs initial data preprocessing
@@ -73,3 +97,4 @@ class ExogenousDataExtractor:
         self.progress_bar.check()
         self.progress_bar.close()
         return df
+
