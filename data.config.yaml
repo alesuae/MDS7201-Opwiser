@@ -1,7 +1,6 @@
 sales:
   path: "raw_data/venta_anonimizada_vf.csv"
   maestro_path: "raw_data/maestro_producto_anonimizado.csv"
-
   numeric_vars:
     venta: "venta_total_neto"
     costo: "costo_total"
@@ -13,3 +12,7 @@ stock:
     stock: "stock_disponible_total"
 
 sku: "codigo_producto2"
+
+join_keys: ["codigo_producto2", "fecha"]
+aggregation_level: "hola"
+aggregation_methods: "holaa"
