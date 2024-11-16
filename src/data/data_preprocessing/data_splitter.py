@@ -1,14 +1,17 @@
 from sklearn.model_selection import train_test_split, TimeSeriesSplit
+from utils.config import get_config
 
 class DataSplitter:
-    def __init__(self, config):
+    def __init__(self, config_mode):
         """
         Configuration for data splitting.
         """
-        self.division = config.get('division', 'train_val_test')
-        self.cv_splits = config.get('cv_splits', 5)
-        self.test_size = config.get('test_size', 0.2)
-        self.validation_size = config.get('validation_size', 0.2)
+        self.config_dict = get_config(config_mode)
+
+        self.division = self.config_dict['division_type'] 
+        self.cv_splits = self.config_dict['cv_splits'] 
+        self.test_size = self.config_dict['test_size'] 
+        self.validation_size = self.config_dict['val_size'] 
 
     def split(self, df, target):
         """
