@@ -1,18 +1,62 @@
+aggregation_level: monthly
+aggregation_methods: {}
+config_path: data.config.yaml
+data:
+  aggregation_methods:
+    black_friday: max
+    cantidad: mean
+    categoria2: max
+    clasificacion2: max
+    cyber_monday: max
+    descripcion_producto2: max
+    ee_comercio: mean
+    es_festivo: max
+    fecha: max
+    icc: mean
+    imacec_comercio: mean
+    imacec_general: mean
+    imacec_no_minero: mean
+    imce_comercio: mean
+    imce_general: mean
+    ine_alimentos: mean
+    ine_supermercados: mean
+    linea2: max
+    pib: mean
+    quarter: max
+    stock_disponible_total: sum
+    tavg: mean
+    tmax: mean
+    tmin: mean
+    tpm: mean
+    trimestre: max
+    venta_total_neto: mean
+    year_month: max
+exog: None
+join_keys:
+- codigo_producto2
+- fecha
 sales:
-  path: "raw_data/venta_anonimizada_vf.csv"
-  maestro_path: "raw_data/maestro_producto_anonimizado.csv"
+  maestro_path: raw_data/maestro_producto_anonimizado.csv
   numeric_vars:
-    venta: "venta_total_neto"
-    costo: "costo_total"
-    cantidad: "cantidad"
-
+    cantidad: cantidad
+    costo: costo_total
+    venta: venta_total_neto
+  path: raw_data/venta_anonimizada_vf.csv
+sku: codigo_producto2
 stock:
-  path: "raw_data/stock_historico_anonimizado.csv"
-  numeric_vars: 
-    stock: "stock_disponible_total"
+  numeric_vars:
+    stock: stock_disponible_total
+  path: raw_data/stock_historico_anonimizado.csv
 
-sku: "codigo_producto2"
+# PROCESSING CONFIGS
+impute_method: "mean"
+log_transform: True
+scaler: "standard"
+power_transformer: "yeo-johnson"
+categorical_encoding: 'onehot'
 
-join_keys: ["codigo_producto2", "fecha"]
-aggregation_level: "hola"
-aggregation_methods: "holaa"
+# SPLITTING CONFIGS
+division_type: 'train_val_test'
+cv_splits: 5
+test_size: 0.2
+val_size: 0.2
