@@ -1,9 +1,11 @@
 from dataset_makers.sales_dataset_maker import SalesDatasetMaker
 from dataset_makers.stock_dataset_maker import StockDatasetMaker
 from data_integrator.data_integrator import DataIntegrator
-from data_extractors.exogenus_data_extractor import ExogenousDataExtractor
+from exogenus_data.exogenus_data_extractor import ExogenousDataExtractor
 
 # TODO: remove hardcoded values
+# TODO: add logging
+# TODO: update pipeline data
 
 # Create and process the sales and stock datasets
 sales_maker = SalesDatasetMaker('data')
@@ -21,7 +23,6 @@ stock_data = stock_maker.get_data()
 exogenous_extractor = ExogenousDataExtractor(config_mode="exog")
 exogenous_data = exogenous_extractor.fetch_data()
 
-# TODO: fix integration process
 
 # Integrate the datasets
 #integrator = DataIntegrator({'sales': sales_data, 'stock': stock_data}, exogenous_data=exogenous_data)
