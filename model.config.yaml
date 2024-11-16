@@ -1,0 +1,6 @@
+# EXAMPLE
+
+results:
+  plots_dir: "results/plots/"
+  metrics_dir: "results/metrics/"
+  models_dir: "results/models/"
