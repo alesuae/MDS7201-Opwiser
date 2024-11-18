@@ -1,0 +1,27 @@
+                               SARIMAX Results                                
+==============================================================================
+Dep. Variable:                      y   No. Observations:                   10
+Model:                 ARIMA(2, 1, 2)   Log Likelihood            -3637148.364
+Date:                Sun, 17 Nov 2024   AIC                        7274306.727
+Time:                        23:08:22   BIC                        7274307.713
+Sample:                    01-31-2022   HQIC                       7274304.599
+                         - 10-31-2022                                         
+Covariance Type:                  opg                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+ar.L1       4.539e-07   2.66e-07      1.706      0.088   -6.77e-08    9.75e-07
+ar.L2       2.143e-07   3.71e-07      0.577      0.564   -5.13e-07    9.42e-07
+ma.L1       4.539e-07   2.66e-07      1.706      0.088   -6.77e-08    9.75e-07
+ma.L2       2.143e-07   3.71e-07      0.577      0.564   -5.13e-07    9.42e-07
+sigma2         0.0002   1.01e-10    1.5e+06      0.000       0.000       0.000
+===================================================================================
+Ljung-Box (L1) (Q):                   0.44   Jarque-Bera (JB):                 0.35
+Prob(Q):                              0.51   Prob(JB):                         0.84
+Heteroskedasticity (H):               0.43   Skew:                            -0.47
+Prob(H) (two-sided):                  0.50   Kurtosis:                         3.23
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+[2] Covariance matrix is singular or near-singular, with condition number 5.57e+16. Standard errors may be unstable.
