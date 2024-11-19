@@ -1,5 +1,7 @@
 import pandas as pd
-from utils.config import get_config
+from src.data.utils.config import get_config
+
+#from utils.config import get_config
 import yaml
 
 # TODO: remove hardcoded data!!

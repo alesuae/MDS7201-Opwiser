@@ -1,5 +1,7 @@
 from sklearn.model_selection import train_test_split, TimeSeriesSplit
-from utils.config import get_config
+#from utils.config import get_config
+
+from src.data.utils.config import get_config
 
 class DataSplitter:
     def __init__(self, config_mode):

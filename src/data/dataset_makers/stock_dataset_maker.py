@@ -1,6 +1,11 @@
-from base.base_dataset_maker import BaseDatasetMaker
-from base.progress_bar import ProgressBar
-from utils.config import get_config
+from src.data.base.base_dataset_maker import BaseDatasetMaker
+from src.data.base.progress_bar import ProgressBar
+from src.data.utils.config import get_config
+
+
+#from base.base_dataset_maker import BaseDatasetMaker
+#from base.progress_bar import ProgressBar
+#from utils.config import get_config
 import pandas as pd
 import polars as pl
 

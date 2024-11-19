@@ -1,11 +1,22 @@
-from dataset_makers.sales_dataset_maker import SalesDatasetMaker
-from dataset_makers.stock_dataset_maker import StockDatasetMaker
-from data_integrator.data_integrator import DataIntegrator
-from exogenus_data.exogenus_data_extractor import ExogenousDataExtractor
-from exogenus_data.exogenus_data_selector import ExogenousDataSelector
-from data_integrator.data_aggregator import DataAggregator
-from data_preprocessing.prepare_data import DataPreparer
-from data_preprocessing.data_splitter import DataSplitter
+from src.data.dataset_makers.sales_dataset_maker import SalesDatasetMaker
+from src.data.dataset_makers.stock_dataset_maker import StockDatasetMaker
+from src.data.data_integrator.data_integrator import DataIntegrator
+from src.data.exogenus_data.exogenus_data_extractor import ExogenousDataExtractor
+from src.data.exogenus_data.exogenus_data_selector import ExogenousDataSelector
+from src.data.data_integrator.data_aggregator import DataAggregator
+from src.data.data_preprocessing.prepare_data import DataPreparer
+from src.data.data_preprocessing.data_splitter import DataSplitter
+
+
+# antes
+#from dataset_makers.sales_dataset_maker import SalesDatasetMaker
+#from dataset_makers.stock_dataset_maker import StockDatasetMaker
+#from data_integrator.data_integrator import DataIntegrator
+#from exogenus_data.exogenus_data_extractor import ExogenousDataExtractor
+#from exogenus_data.exogenus_data_selector import ExogenousDataSelector
+#from data_integrator.data_aggregator import DataAggregator
+#from data_preprocessing.prepare_data import DataPreparer
+#from data_preprocessing.data_splitter import DataSplitter
 
 # TODO: remove hardcoded values
 # TODO: add logging
