@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from src.models.arima_model import ARIMAModel
 from src.data.main import data_pipeline
 
+#import sys
+#import os
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
+
 # Ejecutar el pipeline para obtener los conjuntos de datos
 print("Ejecutando el pipeline para cargar los datos...")
 X_train, X_val, X_test, y_train, y_val, y_test = data_pipeline()

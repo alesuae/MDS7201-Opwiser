@@ -1,5 +1,7 @@
 import pandas as pd
-from utils.config import get_config
+from src.data.utils.config import get_config
+
+#from utils.config import get_config
 
 class DataIntegrator:
     def __init__(self, config_mode):

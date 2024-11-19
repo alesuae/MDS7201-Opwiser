@@ -1,7 +1,9 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, PowerTransformer, OneHotEncoder, LabelEncoder
 from sklearn.pipeline import Pipeline
-from utils.config import get_config
+#from utils.config import get_config
+
+from src.data.utils.config import get_config
 import numpy as np
 
 class DataPreparer:
