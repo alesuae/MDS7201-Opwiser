@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
-from base.progress_bar import ProgressBar
+from src.data.base.progress_bar import ProgressBar
+
+#from base.progress_bar import ProgressBar
 
 class BaseDatasetMaker(ABC):
     def __init__(self):

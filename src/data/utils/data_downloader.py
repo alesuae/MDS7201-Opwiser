@@ -2,7 +2,9 @@
 import bcchapi
 import pandas as pd
 import numpy as np
-from utils.config import get_config
+#from utils.config import get_config
+
+from src.data.utils.config import get_config
 
 def download_data_from_api(config_mode: str) -> pd.DataFrame:
     """
