@@ -40,7 +40,7 @@ class SalesDatasetMaker(BaseDatasetMaker):
         variables = list(self.numeric_variables)
 
         # Delete missing data (SKU)
-        self.progress_bar.update_total_steps(5)
+        self.progress_bar.update_total_steps(4)
         self.progress_bar.log("Starting data transformation...")
         self.progress_bar.log("Removing missing data by sku")
         self.data = self.data.dropna(subset=[self.sku])
