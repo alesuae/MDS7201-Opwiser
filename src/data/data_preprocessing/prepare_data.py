@@ -82,8 +82,9 @@ class DataPreparer:
         for col in df.columns:
             if df[col].dtype in ['float64', 'int64'] and (df[col] > 0).all():
                 df[col] = np.log1p(df[col])  # log1p handles log(1 + x)
-            else:
-                print(f"Skipping log transform for column '{col}' (non-numeric or non-positive values).")
+            # Comenté estas dos lineas de abajo para poder ver mejor la consola
+            # else:
+            #     print(f"Skipping log transform for column '{col}' (non-numeric or non-positive values).")
         return df
 
     def scale_and_transform(self, df):
