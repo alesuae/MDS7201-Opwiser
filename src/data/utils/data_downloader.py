@@ -64,7 +64,6 @@ def download_data_from_api(config_mode: str) -> pd.DataFrame:
 
     # merge
     exog_macro = pd.merge(exog_monthly, exog_quarterly, on='trimestre', how='left')
-    print(exog_macro.columns)
     # rename fecha_x to fecha
     exog_macro = exog_macro.rename(columns={"fecha_x": "fecha"})
     exog_macro = exog_macro.drop(columns=["fecha_y"])

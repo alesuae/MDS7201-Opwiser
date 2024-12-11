@@ -11,7 +11,7 @@ data:
     descripcion_producto2: max
     ee_comercio: mean
     es_festivo: max
-    fecha: max
+    #fecha: max
     icc: mean
     imacec_comercio: mean
     imacec_general: mean
@@ -22,21 +22,18 @@ data:
     ine_supermercados: mean
     linea2: max
     pib: mean
-    quarter: max
-    stock_disponible_total: sum
+    #stock_disponible_total: sum
     tavg: mean
     tmax: mean
     tmin: mean
     tpm: mean
-    trimestre: max
     venta_total_neto: mean
-    year_month: max
 exog: None
 join_keys:
 - codigo_producto2
 - fecha
 sales:
-  maestro_path: raw_data/maestro_producto_anonimizado.csv
+  maestro_path: raw_data/maestro_producto_anonimizado2.csv
   numeric_vars:
     cantidad: cantidad
     costo: costo_total
