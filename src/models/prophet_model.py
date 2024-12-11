@@ -30,7 +30,7 @@ class PROPHETModel:
             Preprocesa los datos: renombra las columnas y convierte 'fecha' a datetime.
             X: DataFrame con las variables exógenas.
             y: Series o DataFrame con la variable objetivo.
-            """
+        """
         if 'fecha' not in X:
             raise ValueError("El DataFrame X debe contener una columna llamada 'fecha'.")
         
@@ -43,12 +43,18 @@ class PROPHETModel:
         if X['ds'].isnull().any():
             raise ValueError("Algunas fechas no pudieron convertirse a formato datetime.")
         
-        X['y'] = y.values if isinstance(y, pd.Series) else y  # Asegurar que y es una Serie/array
+        X['y'] = y.values if isinstance(y, pd.Series) else y
         return X[['ds', 'y'] + [col for col in X.columns if col not in ['fecha', 'y', 'ds']]]
 
-    def fit(self, X_train, y_train):
-        """Entrena el modelo Prophet con los datos de entrenamiento."""
+    def fit(self, X_train, y_train, regressors=[]):
+        """
+        Entrena el modelo Prophet con los datos de entrenamiento y los regresores indicados.
+        X_train: DataFrame con las variables exógenas (incluyendo regresores).
+        y_train: Series o DataFrame con la variable objetivo.
+        regressors: Lista de columnas a incluir como regresores en el modelo.
+        """
         df_train = self.preprocess_data(X_train, y_train)
+
         self.model = Prophet(
             seasonality_mode=self.seasonality_mode,
             yearly_seasonality=self.yearly_seasonality,
@@ -56,10 +62,42 @@ class PROPHETModel:
             daily_seasonality=self.daily_seasonality,
             changepoint_prior_scale=self.changepoint_prior_scale
         )
+
+        for regressor in regressors:
+            if regressor not in self.model.extra_regressors:
+                self.model.add_regressor(regressor)
+                
         self.model.fit(df_train)
 
-    def predict(self, X_test):
-        """Genera predicciones a futuro."""
+    # def predict(self, X_test):
+    #     """Genera predicciones a futuro."""
+    #     # Copiar los datos para no modificar el original
+    #     X_test = X_test.copy()
+
+    #     # Verificar y procesar la columna 'fecha' si existe
+    #     if 'fecha' in X_test.columns:
+    #         X_test['ds'] = pd.to_datetime(X_test['fecha'], errors='coerce')
+    #         if X_test['ds'].isnull().any():
+    #             raise ValueError("Algunas fechas en la columna 'fecha' no pudieron convertirse a formato datetime.")
+    #     elif 'ds' in X_test.columns:
+    #         X_test['ds'] = pd.to_datetime(X_test['ds'], errors='coerce')
+    #         if X_test['ds'].isnull().any():
+    #             raise ValueError("Algunas fechas en la columna 'ds' no pudieron convertirse a formato datetime.")
+    #     else:
+    #         raise ValueError("El DataFrame X_test debe contener una columna 'fecha' o 'ds'.")
+
+    #     # Filtrar solo las columnas necesarias
+    #     X_test = X_test[['ds'] + [col for col in X_test.columns if col not in ['fecha', 'ds']]]
+
+    #     # Generar predicciones
+    #     forecast = self.model.predict(X_test)
+    #     return forecast  # [['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    
+    def predict(self, X_test, regressors=[]):
+        """
+        Genera predicciones a futuro por subfamilia y las agrupa a nivel semanal.
+        X_test: DataFrame que incluye las columnas 'fecha' y las variables dummies de la subfamilia.
+        """
         # Copiar los datos para no modificar el original
         X_test = X_test.copy()
 
@@ -73,15 +111,66 @@ class PROPHETModel:
             if X_test['ds'].isnull().any():
                 raise ValueError("Algunas fechas en la columna 'ds' no pudieron convertirse a formato datetime.")
         else:
-            raise ValueError("El DataFrame X_test debe contener una columna 'fecha' o 'ds'.")
+            raise ValueError("El DataFrame debe contener una columna 'fecha' o 'ds'.")
 
+        # Asegurar que existan las variables dummies de la subfamilia y la columna 'stock_disponible_total' en X_test
+        if [regressor for regressor in regressors if regressor not in X_test.columns]:
+            raise ValueError("No se encontraron las columnas regresoras.")
+        
         # Filtrar solo las columnas necesarias
-        X_test = X_test[['ds'] + [col for col in X_test.columns if col not in ['fecha', 'ds']]]
+        X_test = X_test[['ds'] + regressors]
 
         # Generar predicciones
         forecast = self.model.predict(X_test)
-        return forecast  # [['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
 
+        # Añadir las variables de regresores al forecast para facilitar el análisis
+        for regressor in regressors:
+            forecast[regressor] = X_test[regressor].values
+
+        return forecast  # grouped_forecast
+    
+    def group_forecast_and_y(self, forecast, y_test, regressors=[]):
+        """
+        Realiza un merge entre forecast y y_test por la columna 'week', 
+        y luego agrupa por semana y los regresores, sumando las columnas 'yhat' y 'y_test'.
+        
+        forecast: DataFrame con las predicciones, que contiene la columna 'week'.
+        y_test: DataFrame con los valores reales, que se asume tiene un índice temporal correspondiente.
+        regressors: Lista de regresores que se usarán para la agrupación.
+        
+        Retorna:
+        - forecast_agrupado: DataFrame con el forecast agrupado por semana y regresores.
+        - y_test_agrupado: DataFrame con el y_test agrupado por semana.
+        """
+        
+        # Crear la columna 'week' en forecast
+        forecast['week'] = forecast['ds'].dt.to_period('W').apply(lambda r: r.start_time)
+        
+        # Crear la columna 'week' en y_test a partir del índice
+        y_test = y_test.to_frame()
+        y_test['week'] = forecast['week'].values  # Las fechas de forecast y y_test corresponden
+
+        # Realizar el merge entre forecast y y_test por la columna 'week'
+        merged = pd.merge(forecast, y_test, on='week', how='left')
+        
+        # Agrupar por 'week' y los regresores, y sumar las predicciones y los valores reales
+        grouped_forecast = (
+            merged.groupby(['week'] + regressors)
+            .agg({'yhat': 'sum', 'yhat_lower': 'sum', 'yhat_upper': 'sum', 'venta_total_neto': 'sum'})
+            .reset_index()
+        )
+
+        # Crear la serie 'y_test_agrupado' con los valores de 'venta_total_neto'
+        y_test_agrupado = grouped_forecast['venta_total_neto']
+        
+        # Eliminar la columna 'venta_total_neto' de grouped_forecast
+        grouped_forecast = grouped_forecast.drop(columns=['venta_total_neto'])
+
+        # Ajustar nombre de columna a 'ds' en grouped_forecast
+        grouped_forecast = grouped_forecast.rename(columns={'week': 'ds'})
+    
+        return grouped_forecast, y_test_agrupado
+    
     def save_model(self, path):
         """
         Guarda el modelo Prophet en un archivo.
@@ -200,15 +289,14 @@ class PROPHETModel:
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
         return mae, rmse
 
-    def add_regressors(self, df, features):
+    def add_regressors(self, features):
         """Agrega regresores exógenos al modelo."""
         for feature in features:
             self.model.add_regressor(feature)
 
-    def calculate_shap_values(self, df, model=None):
+    def calculate_shap_values(self, df):
         """Calcula los SHAP values para interpretar el modelo."""
-        if not model:
-            model = self.model
+        model = self.model
         explainer = shap.ProphetExplainer(model)
         shap_values = explainer.shap_values(df)
         return shap_values
