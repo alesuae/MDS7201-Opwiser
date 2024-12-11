@@ -296,8 +296,7 @@ class PROPHETModel:
 
     def calculate_shap_values(self, df):
         """Calcula los SHAP values para interpretar el modelo."""
-        model = self.model
-        explainer = shap.ProphetExplainer(model)
+        explainer = shap.ProphetExplainer(self.model)
         shap_values = explainer.shap_values(df)
         return shap_values
 

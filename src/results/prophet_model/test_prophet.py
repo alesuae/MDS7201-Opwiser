@@ -2,6 +2,7 @@ import sys
 import os
 import json
 # import matplotlib.pyplot as plt
+# import pandas as pd
 
 # Configurar directorios de trabajo
 current_dir = os.path.dirname(__file__)
@@ -14,12 +15,12 @@ sys.path.append(data_path)
 # logs_path = os.path.join(current_dir, "logs")
 metrics_path = os.path.join(current_dir, "metrics")
 models_path = os.path.join(current_dir, "models")
-# plots_path = os.path.join(current_dir, "plots")
+plots_path = os.path.join(current_dir, "plots")
 
 # os.makedirs(logs_path, exist_ok=True)
 os.makedirs(metrics_path, exist_ok=True)
 os.makedirs(models_path, exist_ok=True)
-# os.makedirs(plots_path, exist_ok=True)
+os.makedirs(plots_path, exist_ok=True)
 
 from data.main import data_pipeline
 from models.prophet_model import PROPHETModel
@@ -41,18 +42,18 @@ prophet_model_base.fit(X_train, y_train, regressors)
 
 # Realizar predicciones y agrupar por semana y regresores
 forecast_train = prophet_model_base.predict(X_train, regressors)
-forecast_train, y_train = prophet_model_base.group_forecast_and_y(forecast_train, y_train, regressors)
+forecast_train_gr, y_train = prophet_model_base.group_forecast_and_y(forecast_train, y_train, regressors)
 
 forecast_val = prophet_model_base.predict(X_val, regressors)
-forecast_val, y_val = prophet_model_base.group_forecast_and_y(forecast_val, y_val, regressors)
+forecast_val_gr, y_val = prophet_model_base.group_forecast_and_y(forecast_val, y_val, regressors)
 
 forecast_test = prophet_model_base.predict(X_test, regressors)
-forecast_test, y_test = prophet_model_base.group_forecast_and_y(forecast_test, y_test, regressors)
+forecast_test_gr, y_test = prophet_model_base.group_forecast_and_y(forecast_test, y_test, regressors)
 
 # Calcular errores usando el método de la clase PROPHETModel
-mae_train, rmse_train = prophet_model_base.calculate_mae_rmse(y_train, forecast_train['yhat'])
-mae_val, rmse_val = prophet_model_base.calculate_mae_rmse(y_val, forecast_val['yhat'])
-mae_test, rmse_test = prophet_model_base.calculate_mae_rmse(y_test, forecast_test['yhat'])
+mae_train, rmse_train = prophet_model_base.calculate_mae_rmse(y_train, forecast_train_gr['yhat'])
+mae_val, rmse_val = prophet_model_base.calculate_mae_rmse(y_val, forecast_val_gr['yhat'])
+mae_test, rmse_test = prophet_model_base.calculate_mae_rmse(y_test, forecast_test_gr['yhat'])
 
 # Guardar métricas en JSON
 metrics = {
@@ -68,36 +69,36 @@ with open(os.path.join(metrics_path, "prophet_base_metrics.json"), 'w') as f:
 prophet_model_base.save_model(os.path.join(models_path, "prophet_base_model.pkl"))
 
 # Graficar las predicciones y componentes
-# prophet_model_base.plot(
-#     forecast_train, 
-#     title="Predicciones en Conjunto de Entrenamiento (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_train_predictions.png")
-# )
-# prophet_model_base.plot_components(
-#     forecast_train, 
-#     title="Componentes en Conjunto de Entrenamiento (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_train_components.png")
-# )
-# prophet_model_base.plot(
-#     forecast_val, 
-#     title="Predicciones en Conjunto de Validación (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_val_predictions.png")
-# )
-# prophet_model_base.plot_components(
-#     forecast_val, 
-#     title="Componentes en Conjunto de Validación (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_val_components.png")
-# )
-# prophet_model_base.plot(
-#     forecast_test, 
-#     title="Predicciones en Conjunto de Prueba (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_test_predictions.png")
-# )
-# prophet_model_base.plot_components(
-#     forecast_test, 
-#     title="Componentes en Conjunto de Prueba (Base)",
-#     save_path=os.path.join(plots_path, "prophet_base_test_components.png")
-# )
+prophet_model_base.plot(
+    forecast_train, 
+    title="Predicciones en Conjunto de Entrenamiento (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_train_predictions.png")
+)
+prophet_model_base.plot_components(
+    forecast_train, 
+    title="Componentes en Conjunto de Entrenamiento (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_train_components.png")
+)
+prophet_model_base.plot(
+    forecast_val, 
+    title="Predicciones en Conjunto de Validación (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_val_predictions.png")
+)
+prophet_model_base.plot_components(
+    forecast_val, 
+    title="Componentes en Conjunto de Validación (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_val_components.png")
+)
+prophet_model_base.plot(
+    forecast_test, 
+    title="Predicciones en Conjunto de Prueba (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_test_predictions.png")
+)
+prophet_model_base.plot_components(
+    forecast_test, 
+    title="Componentes en Conjunto de Prueba (Base)",
+    save_path=os.path.join(plots_path, "prophet_base_test_components.png")
+)
 
 # # 2. Modelo Prophet con optimización de hiperparámetros
 # print("Entrenando el modelo Prophet con optimización de hiperparámetros...")
@@ -262,18 +263,18 @@ prophet_model_clima.fit(X_train, y_train, regressors)
 
 # Realizar predicciones y agrupar por semana y regresores
 forecast_train = prophet_model_clima.predict(X_train, regressors)
-forecast_train, y_train = prophet_model_clima.group_forecast_and_y(forecast_train, y_train, regressors)
+forecast_train_gr, y_train = prophet_model_clima.group_forecast_and_y(forecast_train, y_train, regressors)
 
 forecast_val = prophet_model_clima.predict(X_val, regressors)
-forecast_val, y_val = prophet_model_clima.group_forecast_and_y(forecast_val, y_val, regressors)
+forecast_val_gr, y_val = prophet_model_clima.group_forecast_and_y(forecast_val, y_val, regressors)
 
 forecast_test = prophet_model_clima.predict(X_test, regressors)
-forecast_test, y_test = prophet_model_clima.group_forecast_and_y(forecast_test, y_test, regressors)
+forecast_test_gr, y_test = prophet_model_clima.group_forecast_and_y(forecast_test, y_test, regressors)
 
 # Calcular errores usando el método de la clase PROPHETModel
-mae_train, rmse_train = prophet_model_clima.calculate_mae_rmse(y_train, forecast_train['yhat'])
-mae_val, rmse_val = prophet_model_clima.calculate_mae_rmse(y_val, forecast_val['yhat'])
-mae_test, rmse_test = prophet_model_clima.calculate_mae_rmse(y_test, forecast_test['yhat'])
+mae_train, rmse_train = prophet_model_clima.calculate_mae_rmse(y_train, forecast_train_gr['yhat'])
+mae_val, rmse_val = prophet_model_clima.calculate_mae_rmse(y_val, forecast_val_gr['yhat'])
+mae_test, rmse_test = prophet_model_clima.calculate_mae_rmse(y_test, forecast_test_gr['yhat'])
 
 # Guardar métricas en JSON
 metrics = {
@@ -287,6 +288,38 @@ with open(os.path.join(metrics_path, "prophet_clima_metrics.json"), 'w') as f:
 
 # Guardar el modelo entrenado
 prophet_model_clima.save_model(os.path.join(models_path, "prophet_clima_model.pkl"))
+
+# Graficar las predicciones y componentes
+prophet_model_clima.plot(
+    forecast_train, 
+    title="Predicciones en Conjunto de Entrenamiento (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_train_predictions.png")
+)
+prophet_model_clima.plot_components(
+    forecast_train, 
+    title="Componentes en Conjunto de Entrenamiento (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_train_components.png")
+)
+prophet_model_clima.plot(
+    forecast_val, 
+    title="Predicciones en Conjunto de Validación (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_val_predictions.png")
+)
+prophet_model_clima.plot_components(
+    forecast_val, 
+    title="Componentes en Conjunto de Validación (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_val_components.png")
+)
+prophet_model_clima.plot(
+    forecast_test, 
+    title="Predicciones en Conjunto de Prueba (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_test_predictions.png")
+)
+prophet_model_clima.plot_components(
+    forecast_test, 
+    title="Componentes en Conjunto de Prueba (Clima)",
+    save_path=os.path.join(plots_path, "prophet_clima_test_components.png")
+)
 
 # -----------------------------------------------------------------------------------------------------------------
 
