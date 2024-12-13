@@ -1,6 +1,15 @@
 pandas
+polars
 numpy
 scikit-learn
 statsmodels
 matplotlib
-dask
+meteostat
+holidays
+mlflow
+bcchapi
+lightgbm
+xgboost
+plotly
+kaleido
+shap
