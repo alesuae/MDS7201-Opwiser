@@ -31,7 +31,7 @@ class SalesDatasetMaker(BaseDatasetMaker):
         self.data = pl.read_csv(source=self.source_path, separator=';')
         self.maestro_data = pl.read_csv(source=self.maestro_path, separator=';')
         self.data = self.data.to_pandas()
-        self.maestro_data = self.maestro_data.to_pandas()
+        self.maestro_data = self.maestro_data.to_pandas().astype(str)
         self.progress_bar.check()
         self.progress_bar.close()
 
@@ -40,11 +40,8 @@ class SalesDatasetMaker(BaseDatasetMaker):
         variables = list(self.numeric_variables)
 
         # Delete missing data (SKU)
-        self.progress_bar.update_total_steps(5)
+        self.progress_bar.update_total_steps(4)
         self.progress_bar.log("Starting data transformation...")
-        self.progress_bar.log("Removing missing data by sku")
-        self.data = self.data.dropna(subset=[self.sku])
-        self.progress_bar.check()
         
         # Transform numeric data to float
         self.progress_bar.log("Transforming sales data to numeric")
@@ -57,10 +54,3 @@ class SalesDatasetMaker(BaseDatasetMaker):
         self.data = merge_by_sku(self.sku, self.data, self.maestro_data)
         self.progress_bar.check()
 
-        # Add date features
-        self.progress_bar.update_total_steps(1)
-        self.progress_bar.log("Adding date features...")
-        self.data['year_month'] = self.data['fecha'].dt.to_period('M')
-        self.data['quarter'] = self.data['fecha'].dt.to_period('Q')
-        self.progress_bar.check()
-        self.progress_bar.close()
