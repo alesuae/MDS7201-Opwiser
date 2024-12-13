@@ -1,6 +1,14 @@
-# EXAMPLE
+data:
+  raw_data_dir: "data/raw/"
+  processed_data_dir: "data/processed/"
+  splits_data_dir: "data/splits/"
 
 results:
   plots_dir: "results/plots/"
   metrics_dir: "results/metrics/"
   models_dir: "results/models/"
+
+experiment_name: "all_exog_vars"
+n_trials: 30
+baseline_strategy: "mean"
+metric_name: "rmse"
