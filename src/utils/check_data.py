@@ -1,6 +1,10 @@
 import os
 from src.data.data_pipeline import data_pipeline
-from src.mlflow_tracking.pp_tracking import log_preprocessing, log_splitter
+from src.utils.config import get_config
+from src.mlflow_tracking.pp_tracking import log_preprocessing, log_splitter, log_temporal_splitter
+
+config_dict = get_config('model')
+temporal_data = config_dict['temporal_model']
 
 def check_or_create_processed_data(raw_path, processed_path):
     """
@@ -31,7 +35,11 @@ def check_or_create_splitted_data(data, output_path):
         
         else:
             print(f"No se encontraron datos particionados en {output_path}. Ejecutando partición...")
-            log_splitter(data, output_path=output_path)
+            if temporal_data:
+                log_temporal_splitter(data, target='venta_total_neto', output_path=output_path)
+            else:
+                log_splitter(data, output_path=output_path)
+
             print("Partición completada. Datos particionados guardados.")
     else:
         print(f"La ruta '{output_path}' no es una carpeta válida.")
