@@ -17,7 +17,7 @@ from src.mlflow_tracking.artifact_logger import log_data_to_mlflow, log_artifact
 from src.mlflow_tracking.optuna_logger import optimize_model_with_optuna
 from src.utils.check_data import check_or_create_processed_data, check_or_create_splitted_data
 from src.utils.params import get_param_distributions
-from src.utils.predict import get_predictions
+# from src.utils.predict import get_predictions
 from src.mlflow_tracking.interpretability import log_shap_interpretation
 
 warnings.filterwarnings("ignore", category=FutureWarning)
