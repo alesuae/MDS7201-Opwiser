@@ -6,10 +6,11 @@ from sklearn.preprocessing import (
     OneHotEncoder,
     LabelEncoder,
 )
-from sklearn.base import BaseEstimator, TransformerMixin
+
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from src.data.utils.config import get_config
+from src.data.utils.transformers_d import DateTransformer, SemanaTransformer
 import numpy as np
 
 
@@ -25,6 +26,8 @@ class DataPreparer:
         self.apply_log_transform = self.config_dict["log_transform"]
         self.categorical_encoding = self.config_dict["categorical_encoding"]
 
+        self.temporal_data = self.config_dict["temporal_data"]
+
     def prepare(self, df):
         """
         Prepare the dataset according to the current configuration.
@@ -35,7 +38,14 @@ class DataPreparer:
         # Apply log transform if enabled
         df = self.log_transform(df)
 
-        timestamp_columns = df.select_dtypes(include=["datetime64"]).columns
+        if self.temporal_data:
+            timestamp_columns = df.select_dtypes(include=["datetime64"]).columns
+            date_column_original = df[timestamp_columns]
+            df = df.drop(columns=timestamp_columns)
+            timestamp_columns = df.select_dtypes(include=["datetime64"]).columns
+        else:
+            timestamp_columns = df.select_dtypes(include=["datetime64"]).columns
+
         numerical_columns = df.select_dtypes(include=["float64", "int64"]).columns
         df_ns = df.copy()
         df_ns = df_ns.drop(columns=['semana'])
@@ -43,7 +53,8 @@ class DataPreparer:
 
         preprocessor = ColumnTransformer(
             transformers=[
-                ("date", SemanaTransformer(), ['semana']),
+                ("date", DateTransformer(), timestamp_columns),
+                ("week", SemanaTransformer(), ['semana']),
                 (
                     "num",
                     Pipeline(
@@ -64,16 +75,19 @@ class DataPreparer:
         ).fit(df)
 
         date_column_names = preprocessor.named_transformers_["date"].get_feature_names_out()
+        week_column_names = preprocessor.named_transformers_["week"].get_feature_names_out()
         num_column_names = preprocessor.named_transformers_["num"].steps[0][1].get_feature_names_out()
         cat_column_names = preprocessor.named_transformers_["cat"].get_feature_names_out()
 
         transformed_column_names = np.append(
-            date_column_names, num_column_names
+            date_column_names, week_column_names
+        )
+        transformed_column_names = np.append(
+            transformed_column_names, num_column_names
         )
         transformed_column_names = np.append(
             transformed_column_names, cat_column_names
         )
-
         preprocessor_pipeline = Pipeline(steps=[("preprocessor", preprocessor)])
         processed_data = preprocessor_pipeline.fit_transform(df)
         print(processed_data)
@@ -81,6 +95,9 @@ class DataPreparer:
         processed_data_df = pd.DataFrame(
             processed_data, columns=transformed_column_names
         )
+
+        if self.temporal_data:
+            processed_data_df = pd.concat([date_column_original, processed_data_df], axis=1)
 
         return processed_data_df
 
@@ -113,62 +130,3 @@ class DataPreparer:
                 )
         return df
 
-
-class SemanaTransformer(BaseEstimator, TransformerMixin):
-    """
-    Transformador para procesar rangos de fechas en la columna 'semana'.
-    Extrae características útiles para forecasting.
-    """
-
-    def __init__(self):
-        self.feature_names = []
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X = X.copy()
-        transformed = pd.DataFrame()
-
-        for col in X.columns:
-            # Dividir el rango en fecha de inicio y fin
-            transformed[f"{col}_start"] = X[col].str.split('/').str[0]
-            transformed[f"{col}_end"] = X[col].str.split('/').str[1]
-
-            # Convertir a formato datetime
-            transformed[f"{col}_start"] = pd.to_datetime(transformed[f"{col}_start"])
-            transformed[f"{col}_end"] = pd.to_datetime(transformed[f"{col}_end"])
-
-            # Extraer características de la fecha de inicio
-            transformed[f"{col}_start_year"] = transformed[f"{col}_start"].dt.year
-            transformed[f"{col}_start_month"] = transformed[f"{col}_start"].dt.month
-            transformed[f"{col}_start_weekday"] = transformed[f"{col}_start"].dt.weekday
-
-            # Extraer características de la fecha de fin
-            transformed[f"{col}_end_year"] = transformed[f"{col}_end"].dt.year
-            transformed[f"{col}_end_month"] = transformed[f"{col}_end"].dt.month
-            transformed[f"{col}_end_weekday"] = transformed[f"{col}_end"].dt.weekday
-
-            # Opcional: calcular la duración del rango en días
-            transformed[f"{col}_duration_days"] = (
-                transformed[f"{col}_end"] - transformed[f"{col}_start"]
-            ).dt.days
-
-            # Generar nombres de columnas
-            self.feature_names.extend([
-                f"{col}_start_year",
-                f"{col}_start_month",
-                f"{col}_start_weekday",
-                f"{col}_end_year",
-                f"{col}_end_month",
-                f"{col}_end_weekday",
-                f"{col}_duration_days"
-            ])
-
-        # Eliminar columnas originales (si es necesario)
-        transformed.drop(columns=[f"{col}_start", f"{col}_end"], inplace=True)
-
-        return transformed.values
-
-    def get_feature_names_out(self, input_features=None):
-        return self.feature_names
