@@ -1,11 +1,16 @@
 import pandas as pd
-from utils.data_downloader import download_data_from_api
-from base.progress_bar import ProgressBar
+#from utils.data_downloader import download_data_from_api
+#from base.progress_bar import ProgressBar
 from meteostat import Point, Daily
 import holidays
 from holidays import country_holidays
 from datetime import datetime
-from utils.config import get_config
+#from utils.config import get_config
+
+from src.data.utils.data_downloader import download_data_from_api
+from src.data.base.progress_bar import ProgressBar
+from src.data.utils.config import get_config
+
 
 class ExogenousDataExtractor:
     def __init__(self, config_mode):

@@ -1,14 +1,15 @@
-aggregation_level: monthly
+aggregation_level: weekly
 aggregation_methods: {}
 config_path: data.config.yaml
+temporal_data: True
 data:
   aggregation_methods:
     black_friday: max
     cantidad: mean
-    categoria2: max
+    #categoria2: max
     clasificacion2: max
     cyber_monday: max
-    descripcion_producto2: max
+    #descripcion_producto2: max
     ee_comercio: mean
     es_festivo: max
     fecha: max
@@ -22,31 +23,54 @@ data:
     ine_supermercados: mean
     linea2: max
     pib: mean
-    quarter: max
     stock_disponible_total: sum
     tavg: mean
     tmax: mean
     tmin: mean
     tpm: mean
-    trimestre: max
     venta_total_neto: mean
-    year_month: max
+  aggregation_methods2:
+    black_friday: max
+    cantidad: sum
+    categoria2: max
+    clasificacion2: max
+    cyber_monday: max
+    #descripcion_producto2: max
+    ee_comercio: mean
+    es_festivo: max
+    #fecha: max
+    icc: mean
+    imacec_comercio: mean
+    imacec_general: mean
+    imacec_no_minero: mean
+    imce_comercio: mean
+    imce_general: mean
+    ine_alimentos: mean
+    ine_supermercados: mean
+    linea2: max
+    pib: mean
+    #stock_disponible_total: sum
+    tavg: mean
+    tmax: mean
+    tmin: mean
+    tpm: mean
+    venta_total_neto: sum
 exog: None
 join_keys:
 - codigo_producto2
 - fecha
 sales:
-  maestro_path: raw_data/maestro_producto_anonimizado.csv
+  maestro_path: data/raw/maestro_producto_anonimizado2.csv
   numeric_vars:
     cantidad: cantidad
     costo: costo_total
     venta: venta_total_neto
-  path: raw_data/venta_anonimizada_vf.csv
+  path: data/raw/venta_anonimizada_vf.csv
 sku: codigo_producto2
 stock:
   numeric_vars:
     stock: stock_disponible_total
-  path: raw_data/stock_historico_anonimizado.csv
+  path: data/raw/stock_historico_anonimizado.csv
 
 # PROCESSING CONFIGS
 impute_method: "mean"

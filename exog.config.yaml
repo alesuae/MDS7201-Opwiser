@@ -1,70 +1,115 @@
-path: .
-
 creds: creds.txt
-
-series:
-  # CUENTAS NACIONALES
-  # series de imacec y pib volumen a precios ctes, encadenados
-  # ie, refleja la act. economica ajustada por inflacion
-  imacec_general: "F032.IMC.IND.Z.Z.EP18.Z.Z.0.M"
-  imacec_comercio: "F032.IMC.IND.Z.Z.EP18.COM.Z.0.M"
-  imacec_no_minero: "F032.IMC.IND.Z.Z.EP18.N03.Z.0.M"
-  pib: "F032.PIB.FLU.R.CLP.2018.Z.Z.0.M"
-
-  # ESTADISTICAS EXPERIMENTALES
-  # compraventas con facturas electronicas
-  ee_comercio: "F034.CV.FLU.BCCH.Z.COM.M"
-
-  # EXPECTATIVAS ECONOMICAS
-  # indice mensual de confianza empresarial (IMCE)
-  imce_general: "G089.IME.IND.A0.M"
-  imce_comercio: "G089.IME.IND.A1.M"
-  # indice de confianza del consumidor (IPSOS ICC)
-  icc: "F089.ICC.IND.B2M.M"
-
-  # INDICADORES SECTORIALES
-  # alimentos
-  ine_alimentos: "F034.VCCAB.IND.INE.2018.0.M"
-  # indice general de supermercados (INE)
-  ine_supermercados: "F034.VSSR.IND.INE.2018.0.M"
-
-  # TASAS DE INTERES
-  # tasa de politica monetaria (TPM)
-  tpm: "F089.TPM.TAS.11.M"
-
 dates:
-  start: "2018-03-01"
-  end: "2024-06-01"
-
-weather:
-  country: "CL"
-  location: [-33.45694, -70.64827] # santiago, chile
-  variables: ['fecha', 'tavg', 'tmin', 'tmax', 'wspd']
-  
+  end: '2024-06-01'
+  start: '2018-03-01'
 discounts:
-  cybermonday: [
-    '2018-10-08', '2018-10-09', '2018-10-10',
-    '2019-10-07', '2019-10-08', '2019-10-09',
-    '2020-11-02', '2020-11-03', '2020-11-04',
-    '2021-10-04', '2021-10-05', '2021-10-06',
-    '2022-10-03', '2022-10-04', '2022-10-05',
-    '2023-10-02', '2023-10-03', '2023-10-04',
-    '2024-09-30', '2024-10-01', '2024-10-02',
-]
-  blackfriday: [
-    '2018-11-23',  
-    '2019-11-29', 
-    '2020-11-27', 
-    '2021-11-26',  
-    '2021-11-27',  
-    '2021-11-28',  
-    '2021-11-29',  
-    '2022-11-25',  
-    '2022-11-26', 
-    '2022-11-27',  
-    '2022-11-28',  
-    '2023-11-24',  
-    '2023-11-25',  
-    '2023-11-26',  
-    '2023-11-27',  
-]
+  blackfriday:
+  - '2018-11-23'
+  - '2019-11-29'
+  - '2020-11-27'
+  - '2021-11-26'
+  - '2021-11-27'
+  - '2021-11-28'
+  - '2021-11-29'
+  - '2022-11-25'
+  - '2022-11-26'
+  - '2022-11-27'
+  - '2022-11-28'
+  - '2023-11-24'
+  - '2023-11-25'
+  - '2023-11-26'
+  - '2023-11-27'
+  cybermonday:
+  - '2018-10-08'
+  - '2018-10-09'
+  - '2018-10-10'
+  - '2019-10-07'
+  - '2019-10-08'
+  - '2019-10-09'
+  - '2020-11-02'
+  - '2020-11-03'
+  - '2020-11-04'
+  - '2021-10-04'
+  - '2021-10-05'
+  - '2021-10-06'
+  - '2022-10-03'
+  - '2022-10-04'
+  - '2022-10-05'
+  - '2023-10-02'
+  - '2023-10-03'
+  - '2023-10-04'
+  - '2024-09-30'
+  - '2024-10-01'
+  - '2024-10-02'
+exogenous_data:
+  discounts:
+  - cyber_monday
+  - black_friday
+  holidays:
+  - es_festivo
+  macroeconomic:
+  - ee_comercio
+  - icc
+  - imacec_comercio
+  - imacec_general
+  - imacec_no_minero
+  - imce_comercio
+  - imce_general
+  - ine_alimentos
+  - ine_supermercados
+  - tpm
+  - pib
+  weather:
+  - tavg
+  - tmin
+  - tmax
+  - wspd
+exogenous_variables: {}
+groups:
+  discounts:
+  - cyber_monday
+  - black_friday
+  holidays:
+  - es_festivo
+  macroeconomic:
+  - imacec_general
+  - imacec_comercio
+  - imacec_no_minero
+  - pib
+  - ee_comercio
+  - imce_general
+  - imce_comercio
+  - icc
+  - ine_alimentos
+  - ine_supermercados
+  - tpm
+  weather:
+  - tavg
+  - tmin
+  - tmax
+  - wspd
+path: .
+selected_variables: true
+series:
+  ee_comercio: F034.CV.FLU.BCCH.Z.COM.M
+  icc: F089.ICC.IND.B2M.M
+  imacec_comercio: F032.IMC.IND.Z.Z.EP18.COM.Z.0.M
+  imacec_general: F032.IMC.IND.Z.Z.EP18.Z.Z.0.M
+  imacec_no_minero: F032.IMC.IND.Z.Z.EP18.N03.Z.0.M
+  imce_comercio: G089.IME.IND.A1.M
+  imce_general: G089.IME.IND.A0.M
+  ine_alimentos: F034.VCCAB.IND.INE.2018.0.M
+  ine_supermercados: F034.VSSR.IND.INE.2018.0.M
+  pib: F032.PIB.FLU.R.CLP.2018.Z.Z.0.M
+  tpm: F089.TPM.TAS.11.M
+weather:
+  country: CL
+  location:
+  - -33.45694
+  - -70.64827
+  variables:
+  - fecha
+  - tavg
+  - tmin
+  - tmax
+  - wspd
