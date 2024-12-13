@@ -9,7 +9,7 @@ class DataIntegrator:
     def __init__(self, config_mode):
         self.config_mode = config_mode
         self.config_dict = get_config(config_mode)
-        self.aggregation_methods = self.config_dict['data']['aggregation_methods']
+        self.aggregation_methods = self.config_dict['data']['aggregation_methods2']
 
         self.join_keys = self.config_dict['join_keys']
 
