@@ -2,6 +2,7 @@ import mlflow
 import optuna
 import warnings
 import pandas as pd
+import os
 
 from sklearn.dummy import DummyRegressor
 from sklearn.linear_model import LogisticRegression
@@ -9,6 +10,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.tree import DecisionTreeRegressor
 from lightgbm import LGBMRegressor
 from xgboost import XGBRegressor
+from src.models.arima_model import SARIMAXModel
 
 from src.mlflow_tracking.tracking import configure_mlflow
 from src.mlflow_tracking.model_logger import log_model_with_mlflow
@@ -48,11 +50,17 @@ def main():
 
     # 3. Cargar datos
     print("Cargando datos...")
-    X_train, X_test, y_train, y_test = load_data(splits_path)
+    X_train, X_test, y_train, y_test, X_train_temp, X_test_temp, y_train_temp, y_test_temp = load_data(splits_path)
     log_data_to_mlflow(pd.DataFrame(X_train), "X_train.csv", "data/splits")
     log_data_to_mlflow(pd.DataFrame(X_test), "X_test.csv", "data/splits")
     log_data_to_mlflow(pd.DataFrame(y_train), "y_train.csv", "data/splits")
     log_data_to_mlflow(pd.DataFrame(y_test), "y_test.csv", "data/splits")
+
+    # Registrar los datos temporales en MLflow
+    log_data_to_mlflow(X_train_temp.reset_index(), "X_train_temp.csv", "data/splits")
+    log_data_to_mlflow(X_test_temp.reset_index(), "X_test_temp.csv", "data/splits")
+    log_data_to_mlflow(y_train_temp.reset_index(), "y_train_temp.csv", "data/splits")  
+    log_data_to_mlflow(y_test_temp.reset_index(), "y_test_temp.csv", "data/splits")    
 
     # 4. Entrenar baseline
     print("Entrenando modelo baseline...")
@@ -69,8 +77,70 @@ def main():
     )
 
     # AÑADIR ENTRENAMIENTO DE ARIMA
-    
-    return
+    # Definir columnas exógenas
+    exog_columns = [
+        "imacec_general", "imacec_comercio", "imacec_no_minero", "ee_comercio",
+        "imce_general", "imce_comercio", "icc", "ine_alimentos", "ine_supermercados",
+        "tpm", "pib", "es_festivo", "tavg", "tmin", "tmax", 
+        "cyber_monday", "black_friday"
+    ]
+
+    # Entrenar ARIMA sin variables exógenas
+    print("Entrenando modelo ARIMA sin variables exógenas...")
+    with mlflow.start_run(run_name="ARIMA_sin_exog"):
+        sarimax_no_exog = SARIMAXModel(order=(0, 1, 1), seasonal_order=(0, 1, 1, 52))
+        sarimax_no_exog.fit(y_train_temp)
+        
+        forecast_no_exog = sarimax_no_exog.predict(steps=len(y_test_temp))
+        mae_no_exog, rmse_no_exog = sarimax_no_exog.evaluate(y_test_temp, forecast_no_exog)
+        
+        # Log de métricas y modelo
+        mlflow.log_metric("mae", mae_no_exog)
+        mlflow.log_metric("rmse", rmse_no_exog)
+        mlflow.log_param("model_type", "SARIMAX")
+        mlflow.log_param("order", sarimax_no_exog.order)
+        mlflow.log_param("seasonal_order", sarimax_no_exog.seasonal_order)
+
+        # Guardar artefactos
+        output_path = "src/results/arima_model"
+        sarimax_no_exog.save_model(os.path.join(output_path, "sarimax_no_exog.pkl"))
+        sarimax_no_exog.save_plot(
+            y_train=y_train_temp,
+            forecast=forecast_no_exog,
+            steps=52,
+            file_path=os.path.join(output_path, "sarimax_no_exog_forecast.png")
+        )
+
+    # Entrenar ARIMA con variables exógenas
+    print("Entrenando modelo ARIMA con variables exógenas...")
+    with mlflow.start_run(run_name="ARIMA_con_exog"):
+        sarimax_with_exog = SARIMAXModel(order=(0, 1, 1), seasonal_order=(0, 1, 1, 52))
+        
+        # Asegurar que las columnas exógenas existan en X_train_temp
+        exog_train = X_train_temp[exog_columns]
+        exog_test = X_test_temp[exog_columns]
+        
+        sarimax_with_exog.fit(y_train_temp, exog=exog_train)
+        
+        forecast_with_exog = sarimax_with_exog.predict(steps=len(y_test_temp), exog=exog_test)
+        mae_with_exog, rmse_with_exog = sarimax_with_exog.evaluate(y_test_temp, forecast_with_exog)
+        
+        # Log de métricas y modelo
+        mlflow.log_metric("mae", mae_with_exog)
+        mlflow.log_metric("rmse", rmse_with_exog)
+        mlflow.log_param("model_type", "SARIMAX")
+        mlflow.log_param("order", sarimax_with_exog.order)
+        mlflow.log_param("seasonal_order", sarimax_with_exog.seasonal_order)
+        mlflow.log_param("exog_columns", exog_columns)
+
+        # Guardar artefactos
+        sarimax_with_exog.save_model(os.path.join(output_path, "sarimax_with_exog.pkl"))
+        sarimax_with_exog.save_plot(
+            y_train=y_train_temp,
+            forecast=forecast_with_exog,
+            steps=52,
+            file_path=os.path.join(output_path, "sarimax_with_exog_forecast.png")
+        )
 
     # 5. Modelos de Machine Learning
     print("Entrenando modelos de Machine Learning...")
