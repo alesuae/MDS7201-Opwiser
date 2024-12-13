@@ -9,7 +9,8 @@ MLFLOW_ARTIFACTS := mlruns
 help:
 	@echo "Usage:"
 	@echo "  make install        Install dependencies from requirements.txt"
-	@echo "  make run            Run the main pipeline script"
+	@echo "  make run            Run the main ML pipeline script"
+	@echo "  make run-temporal   Run the temporal pipeline script"
 	@echo "  make mlflow         Start the MLflow server"
 	@echo "  make clean          Clean auto-generated files and artifacts"
 	@echo "  make clean-mlflow   Clean MLflow artifacts and logs"

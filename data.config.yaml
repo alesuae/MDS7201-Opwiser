@@ -1,6 +1,7 @@
 aggregation_level: weekly
 aggregation_methods: {}
 config_path: data.config.yaml
+temporal_data: True
 data:
   aggregation_methods:
     black_friday: max
