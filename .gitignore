@@ -2,6 +2,12 @@
 raw_data/
 .DS_Store
 creds.txt
+processed/
+data/
+!src/data/
+mlruns/
+*.png
+*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
