@@ -68,6 +68,10 @@ def main():
         params=params_base,
     )
 
+    # AÑADIR ENTRENAMIENTO DE ARIMA
+    
+    return
+
     # 5. Modelos de Machine Learning
     print("Entrenando modelos de Machine Learning...")
     seed = 42

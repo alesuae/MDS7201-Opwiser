@@ -1,6 +1,7 @@
 aggregation_level: weekly
 aggregation_methods: {}
 config_path: data.config.yaml
+temporal_data: True
 data:
   aggregation_methods:
     black_friday: max
@@ -11,7 +12,7 @@ data:
     #descripcion_producto2: max
     ee_comercio: mean
     es_festivo: max
-    #fecha: max
+    fecha: max
     icc: mean
     imacec_comercio: mean
     imacec_general: mean
