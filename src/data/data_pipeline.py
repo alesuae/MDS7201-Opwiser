@@ -28,20 +28,14 @@ def data_pipeline():
     exogenous_data = exogenous_extractor.join_data()
     selector = ExogenousDataSelector(exogenous_data=exogenous_data)
     exog_selected_data = selector.select(exogenous_data)
-    print('termine exog')
 
     # Integrate the datasets
-    print('emepece integrator')
     integrator = DataIntegrator(config_mode='data')
     dataset = integrator.integrate(sales_data, stock_data, exog_selected_data)
-    print('y aqui?')
-    #profile_pp = ProfileReport(dataset, title="Profiling Report")
-    #profile_pp.to_file("your_report_int.html")
 
     # Aggregate data (config in data.config.yaml)
     aggregator = DataAggregator(config_mode='data')
     aggregator.interactive_aggregation_setup(dataset)
     aggregated_data = aggregator.aggregate(dataset)  
-    print(aggregated_data.info())
     
     return aggregated_data
