@@ -97,7 +97,7 @@ class DataPreparer:
         )
 
         if self.temporal_data:
-            processed_data_df = pd.concat([date_column_original, processed_data_df], axis=1)
+            processed_data_df['fecha'] = date_column_original
 
         return processed_data_df
 

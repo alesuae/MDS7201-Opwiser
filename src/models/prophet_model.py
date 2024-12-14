@@ -147,7 +147,7 @@ class PROPHETModel:
         forecast['week'] = forecast['ds'].dt.to_period('W').apply(lambda r: r.start_time)
         
         # Crear la columna 'week' en y_test a partir del índice
-        y_test = y_test.to_frame()
+        #y_test = y_test.to_frame()
         y_test['week'] = forecast['week'].values  # Las fechas de forecast y y_test corresponden
 
         # Realizar el merge entre forecast y y_test por la columna 'week'
@@ -294,12 +294,12 @@ class PROPHETModel:
         for feature in features:
             self.model.add_regressor(feature)
 
-    def calculate_shap_values(self, df):
-        """Calcula los SHAP values para interpretar el modelo."""
-        explainer = shap.ProphetExplainer(self.model)
-        shap_values = explainer.shap_values(df)
-        return shap_values
+    # def calculate_shap_values(self, df):
+    #     """Calcula los SHAP values para interpretar el modelo."""
+    #     explainer = shap.ProphetExplainer(self.model)
+    #     shap_values = explainer.shap_values(df)
+    #     return shap_values
 
-    def plot_shap_summary(self, shap_values):
-        """Genera un gráfico de resumen de los SHAP values."""
-        shap.summary_plot(shap_values)
+    # def plot_shap_summary(self, shap_values):
+    #     """Genera un gráfico de resumen de los SHAP values."""
+    #     shap.summary_plot(shap_values)
