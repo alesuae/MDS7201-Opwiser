@@ -110,7 +110,7 @@ def log_temporal_splitter(data_df:pd.DataFrame, target:str, output_path:str) -> 
             raise ValueError("Se encontraron fechas no válidas en la columna 'fecha' después de la conversión.")
         
         # Aseguramos que 'fecha' sea el índice temporal
-        data_df.set_index('fecha', inplace=True)
+        data_df.set_index('fecha', inplace=True, drop=False)
         # Verificamos que el índice esté ordenado y con frecuencia asignada
         if not data_df.index.is_monotonic_increasing:
             data_df = data_df.sort_index()

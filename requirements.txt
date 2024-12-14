@@ -12,5 +12,8 @@ lightgbm
 xgboost
 plotly
 kaleido
+pyarrow
+prophet
 shap
+optuna
 imblearn
