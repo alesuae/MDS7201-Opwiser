@@ -41,29 +41,7 @@ discounts:
   - '2024-09-30'
   - '2024-10-01'
   - '2024-10-02'
-exogenous_data:
-  discounts:
-  - cyber_monday
-  - black_friday
-  holidays:
-  - es_festivo
-  macroeconomic:
-  - ee_comercio
-  - icc
-  - imacec_comercio
-  - imacec_general
-  - imacec_no_minero
-  - imce_comercio
-  - imce_general
-  - ine_alimentos
-  - ine_supermercados
-  - tpm
-  - pib
-  weather:
-  - tavg
-  - tmin
-  - tmax
-  - wspd
+exogenous_data: {}
 exogenous_variables: {}
 groups:
   discounts:
@@ -89,7 +67,7 @@ groups:
   - tmax
   - wspd
 path: .
-selected_variables: true
+selected_variables: false
 series:
   ee_comercio: F034.CV.FLU.BCCH.Z.COM.M
   icc: F089.ICC.IND.B2M.M

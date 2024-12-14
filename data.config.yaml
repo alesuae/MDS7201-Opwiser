@@ -1,59 +1,61 @@
 aggregation_level: weekly
 aggregation_methods: {}
 config_path: data.config.yaml
-temporal_data: True
+avg_date: "2023-01-01"
+temporal_data: False
 data:
+# clasificacion;linea;categoria;marca
   aggregation_methods:
     black_friday: max
     cantidad: mean
-    #categoria2: max
     clasificacion2: max
     cyber_monday: max
-    #descripcion_producto2: max
-    ee_comercio: mean
+    #ee_comercio: mean
     es_festivo: max
     fecha: max
-    icc: mean
-    imacec_comercio: mean
-    imacec_general: mean
-    imacec_no_minero: mean
-    imce_comercio: mean
-    imce_general: mean
-    ine_alimentos: mean
-    ine_supermercados: mean
-    linea2: max
-    pib: mean
+    #icc: mean
+    #imacec_comercio: mean
+    #imacec_general: mean
+    #imacec_no_minero: mean
+    #imce_comercio: mean
+    #imce_general: mean
+    #ine_alimentos: mean
+    #ine_supermercados: mean
+    linea: max
+    categoria: max
+    marca: max
+    #pib: mean
     stock_disponible_total: sum
-    tavg: mean
-    tmax: mean
-    tmin: mean
-    tpm: mean
+    #tavg: mean
+    #tmax: mean
+    #tmin: mean
+    #tpm: mean
     venta_total_neto: mean
   aggregation_methods2:
     black_friday: max
     cantidad: sum
-    categoria2: max
+    categoria_2: max
     clasificacion2: max
     cyber_monday: max
-    #descripcion_producto2: max
-    ee_comercio: mean
+    #ee_comercio: mean
     es_festivo: max
-    #fecha: max
-    icc: mean
-    imacec_comercio: mean
-    imacec_general: mean
-    imacec_no_minero: mean
-    imce_comercio: mean
-    imce_general: mean
-    ine_alimentos: mean
-    ine_supermercados: mean
+    linea: max
+    categoria: max
+    marca: max
+    #icc: mean
+    #imacec_comercio: mean
+    #imacec_general: mean
+    #imacec_no_minero: mean
+    #imce_comercio: mean
+    #imce_general: mean
+    #ine_alimentos: mean
+    #ine_supermercados: mean
     linea2: max
-    pib: mean
-    #stock_disponible_total: sum
-    tavg: mean
-    tmax: mean
-    tmin: mean
-    tpm: mean
+    #pib: mean
+    #tavg: mean
+    #tmax: mean
+    #tmin: mean
+    #tpm: mean
     venta_total_neto: sum
 exog: None
 join_keys:
