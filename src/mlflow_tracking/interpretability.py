@@ -17,10 +17,8 @@ def log_shap_interpretation(model, dataset, num_samples=3):
         dataset (pd.DataFrame): Conjunto de datos de entrada para las explicaciones.
         num_samples (int): Número de instancias para las cuales se calcularán los SHAP values.
     """
-    # Cargar el modelo desde MLFlow
-    #model = mlflow.sklearn.load_model(f"models:/{model_name}/latest")
-
     # Seleccionar instancias aleatorias del dataset
+    dataset = dataset.drop(columns=["semana", "categoria_2"])
     random_indices = np.random.choice(dataset.index, size=num_samples, replace=False)
     sample_data = dataset
 
@@ -35,8 +33,6 @@ def log_shap_interpretation(model, dataset, num_samples=3):
 
     # Generar valores de SHAP para las instancias seleccionadas
     shap_values = explainer.shap_values(sample_data)
-    print(len(shap_values))
-    print(len(dataset))
 
     # Crear gráficos de SHAP
     print("Generando gráficos de SHAP...")

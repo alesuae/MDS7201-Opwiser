@@ -64,9 +64,10 @@ class ExogenousDataSelector:
         if not self.selected_variables:
             print("\nSelect variables by group or individually:")
 
-            print("1. Select by group (e.g. macroeconomic, weather, discounts)")
+            print("1. Select by group (e.g. macroeconomic, weather, holidays or discounts)")
             print("2. Select specific variables")
             print("3. Select all variables (ENTER)")
+            print("4. None")
 
             user_input = input("Option: ").strip()
 
@@ -74,6 +75,8 @@ class ExogenousDataSelector:
                 self.selected_variables = self.exogenous_data.columns.to_list()
             elif user_input.isnumeric():
                 self._select_specific_variables()
+            elif user_input == "none":
+                self.selected_variables = []
             else:
                 self._select_groups(user_input)
 

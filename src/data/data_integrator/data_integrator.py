@@ -35,13 +35,9 @@ class DataIntegrator:
         base_stock = pd.MultiIndex.from_product([df_stock_agg['codigo_producto2'].unique(), date_range], names=['codigo_producto2', 'fecha']).to_frame(index=False)
         df_consolidated = base_stock.merge(df_stock_agg, on=['codigo_producto2', 'fecha'], how='left')
         df_consolidated = df_consolidated.rename(columns={'codigo_producto2': 'codigo_producto_stock'})
-        print('ya renombre')
         df_consolidated.fillna({'stock_disponible_total': 0}, inplace=True)
-        print('ya llene')
 
-        print('voy a mergear')
         df = self._merge_by_chunks(df_sales_agg, df_consolidated)
-        print('hola')
 
         df['fecha'] = pd.to_datetime(df['fecha'])
         df['semana'] = df['fecha'].dt.to_period('W').astype(str)
@@ -53,7 +49,6 @@ class DataIntegrator:
         df['stock_disponible_total'] = df['stock_disponible_total'].fillna(df['stock_media_semanal'])
         df = df.drop(columns=['stock_media_semanal'])
         df = df[df['fecha'].dt.year != 2020]
-        print('no me cai')
 
         return df
     

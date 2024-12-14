@@ -9,7 +9,6 @@ def merge_by_sku(sku: str, data1: pd.DataFrame, data2: pd.DataFrame) -> pd.DataF
 
     if len(common_names) > 0:
         print(f"DataFrames have common columns: {common_names}")
-
         # Merge datasets
         common_names.remove(sku)
         # Supposing that data1 is sales data
