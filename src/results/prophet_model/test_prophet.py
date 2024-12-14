@@ -1,3 +1,6 @@
+# Primer test de prophet. El utilizado para la presentación se encuentran en el directorio MDS7201-Opwiser/test_prophet.py
+
+
 import sys
 import os
 import json
