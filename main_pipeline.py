@@ -24,7 +24,7 @@ warnings.filterwarnings("ignore", category=UserWarning)
 import numpy as np
 
 from src.utils.config import get_config
-from src.utils.load_data import load_data
+from src.utils.load_data import load_data, load_semana
 
 config_dict = get_config('model')
 raw_path = config_dict["data"]['raw_data_dir']
@@ -54,6 +54,9 @@ def main():
     log_data_to_mlflow(pd.DataFrame(y_train), "y_train.csv", "data/splits")
     log_data_to_mlflow(pd.DataFrame(y_test), "y_test.csv", "data/splits")
 
+    original_agg = pd.read_csv("data/splits/original_agg_test.csv")
+    log_data_to_mlflow(pd.DataFrame(original_agg), "original_agg_test.csv", "data/splits")
+
     # 4. Entrenar baseline
     print("Entrenando modelo baseline...")
     params_base = {}
@@ -64,6 +67,7 @@ def main():
         y_train=y_train,
         X_test=X_test,
         y_test=y_test,
+        original_agg=original_agg,
         run_name="Baseline",
         params=params_base,
     )
@@ -87,6 +91,7 @@ def main():
             y_train=y_train,
             X_test=X_test,
             y_test=y_test,
+            original_agg=original_agg,
             run_name=model_name,
             params=params_ml,
         )
@@ -124,6 +129,7 @@ def main():
         y_train=y_train,
         X_test=X_test,
         y_test=y_test,
+        original_agg=original_agg,
         run_name=f"Optimized Model {type(best_model).__name__}",
         params=best_params,
         register_model=True
@@ -141,7 +147,7 @@ def main():
 
     # 8. Interpretar el modelo con SHAP
     print("Interpretando el modelo con SHAP...")
-    X_s = df.drop(columns=["venta_total_neto"])
+    X_s = df.drop(columns=["venta_total_neto", "fecha"])
     log_shap_interpretation(best_model, X_s, num_samples=3)
     print("Pipeline completado.")
 

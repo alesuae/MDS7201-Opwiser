@@ -3,7 +3,10 @@ import pandas as pd
 import mlflow
 
 from src.data.data_preprocessing.prepare_data import DataPreparer
+from src.utils.config import get_config
 
+config_dict = get_config('data')
+avg_date = config_dict['avg_date']
 
 def log_preprocessing(data:pd.DataFrame, output_path:str) -> pd.DataFrame:
     """
@@ -17,7 +20,7 @@ def log_preprocessing(data:pd.DataFrame, output_path:str) -> pd.DataFrame:
         # Cargar y procesar datos
         preparer = DataPreparer(config_mode='data')
         processed_data = preparer.prepare(data)
-       
+
         processed_data.to_csv(output_path, index=False)
 
         # Registrar métricas y artefactos
@@ -38,14 +41,47 @@ def log_splitter(data_df:pd.DataFrame, output_path:str) -> pd.DataFrame:
     """
     with mlflow.start_run(run_name="Splitting"):
         # Dividir datos
-        X = data_df.drop(columns=['venta_total_neto']) 
-        y = data_df['venta_total_neto']  
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        #y = data_df['venta_total_neto']
+        #X = data_df.drop(columns=['venta_total_neto']) 
+          
+        #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+        # Dividir respetando la secuencia temporal
+        train_data = data_df[data_df['fecha'] < avg_date]
+        test_data = data_df[data_df['fecha'] >= avg_date]
+
+        X_train = train_data.drop(columns=['venta_total_neto'])
+        y_train = train_data['venta_total_neto']
+        X_test = test_data.drop(columns=['venta_total_neto'])
+        y_test = test_data['venta_total_neto']
+
+        X_train_semana = X_train["semana"].values
+        X_train_categoria = X_train["categoria_2"].values
+        X_train_fecha = X_train["fecha"].values
+        X_train = X_train.drop(columns=["semana", "categoria_2", "fecha"])
         
+        X_test_semana = X_test["semana"].values
+        X_test_categoria = X_test["categoria_2"].values
+        X_test_fecha = X_test["fecha"].values
+        X_test = X_test.drop(columns=["semana", "categoria_2", "fecha"])    
+        
+        original_agg_train = pd.DataFrame({
+            "X_train_semana": X_train_semana,
+            "X_train_categoria": X_train_categoria,  
+            "X_train_fecha": X_train_fecha
+        })
+        original_agg_test = pd.DataFrame({
+            "X_test_semana": X_test_semana,
+            "X_test_categoria": X_test_categoria,
+            "X_test_fecha": X_test_fecha   
+        })
+
         X_train.to_csv('data/splits/X_train.csv', index=False)
         y_train.to_csv('data/splits/y_train.csv', index=False)
         X_test.to_csv('data/splits/X_test.csv', index=False)
         y_test.to_csv('data/splits/y_test.csv', index=False)
+        original_agg_train.to_csv('data/splits/original_agg_train.csv', index=False)
+        original_agg_test.to_csv('data/splits/original_agg_test.csv', index=False)
 
         # Registrar métricas y artefactos
         mlflow.log_param("rows_train", X_train.shape[0])
@@ -83,10 +119,29 @@ def log_temporal_splitter(data_df:pd.DataFrame, target:str, output_path:str) -> 
         y = data_df[target]
 
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, shuffle=False)
+        X_train_semana = X_train["semana"].values
+        X_train_categoria = X_train["categoria_2"].values
+        X_train = X_train.drop(columns=["semana", "categoria_2"])
+        
+        X_test_semana = X_test["semana"].values
+        X_test_categoria = X_test["categoria_2"].values
+        X_test = X_test.drop(columns=["semana", "categoria_2"])  
+        
+        original_agg_train = pd.DataFrame({
+            "X_train_semana": X_train_semana,
+            "X_train_categoria": X_train_categoria,  
+        })
+        original_agg_test = pd.DataFrame({
+            "X_test_semana": X_test_semana,
+            "X_test_categoria": X_test_categoria   
+        })
+
         X_train.to_csv('data/splits/X_train.csv', index=False)
         y_train.to_csv('data/splits/y_train.csv', index=False)
         X_test.to_csv('data/splits/X_test.csv', index=False)
         y_test.to_csv('data/splits/y_test.csv', index=False)
+        original_agg_train.to_csv('data/splits/original_agg_train.csv', index=False)
+        original_agg_test.to_csv('data/splits/original_agg_test.csv', index=False)
 
         # Registrar métricas y artefactos
         mlflow.log_param("rows_train", X_train.shape[0])

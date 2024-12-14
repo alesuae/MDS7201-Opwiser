@@ -16,3 +16,4 @@ pyarrow
 prophet
 shap
 optuna
+imblearn

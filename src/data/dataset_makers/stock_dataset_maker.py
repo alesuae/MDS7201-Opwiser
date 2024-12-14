@@ -2,10 +2,6 @@ from src.data.base.base_dataset_maker import BaseDatasetMaker
 from src.data.base.progress_bar import ProgressBar
 from src.data.utils.config import get_config
 
-
-#from base.base_dataset_maker import BaseDatasetMaker
-#from base.progress_bar import ProgressBar
-#from utils.config import get_config
 import pandas as pd
 import polars as pl
 
@@ -27,11 +23,6 @@ class StockDatasetMaker(BaseDatasetMaker):
         self.data = self.data.to_pandas()
         self.progress_bar.check()
         self.progress_bar.close()
-
-    #def clean_data(self):
-    #    # TODO: implement data imputation of missing values
-    #    self.data.fillna(0, inplace=True)
-    #    print("Stock data cleaned.")
 
     def clean_data(self):
         variables = list(self.numeric_variables)

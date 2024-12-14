@@ -16,3 +16,8 @@ def load_data(data_path:str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, 
     y_train = pd.read_csv(f'{data_path}/y_train.csv')
     y_test = pd.read_csv(f'{data_path}/y_test.csv')
     return X_train, X_test, y_train, y_test
+
+def load_semana(data_path:str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    X_train_semana = pd.read_csv(f'{data_path}/X_train_semana.csv')
+    X_test_semana = pd.read_csv(f'{data_path}/X_test_semana.csv')
+    return X_train_semana, X_test_semana
