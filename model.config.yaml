@@ -8,8 +8,8 @@ results:
   metrics_dir: "results/metrics/"
   models_dir: "results/models/"
 
-experiment_name: "debug"
+experiment_name: "holidays"
 n_trials: 30
 baseline_strategy: "mean"
 metric_name: "rmse"
-temporal_model: True
+temporal_model: False
