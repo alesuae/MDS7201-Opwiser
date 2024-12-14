@@ -76,10 +76,10 @@ class DataAggregator:
         # Configurar nivel de agregación
         if self.aggregation_level == 'monthly':
             df['mes'] = pd.to_datetime(df['fecha']).dt.to_period('M')
-            groupby_cols = ['mes', 'categoria2']
+            groupby_cols = ['mes', 'categoria_2']
         elif self.aggregation_level == 'weekly':
             df['semana'] = pd.to_datetime(df['fecha']).dt.to_period('W')
-            groupby_cols = ['semana', 'categoria2']
+            groupby_cols = ['semana', 'categoria_2']
         else:
             raise ValueError(f"Nivel de agregación '{self.aggregation_level}' no encontrado.")
 
